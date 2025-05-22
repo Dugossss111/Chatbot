@@ -23,7 +23,7 @@ st.markdown("""
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 9999;
+    z-index: 10001;  /* sempre sopra i titoli */
 }
 
 /* Spazio sotto la barra */
@@ -57,31 +57,56 @@ html, body, [data-testid="stMarkdownContainer"] {
     color: #222222 !important;
 }
 
-/* Stile input minimal */
+/* Stile input con bordo grigio attorno solo all'input */
 div.stTextInput > div > input {
     background-color: transparent !important;
-    border: none !important;
-    border-bottom: 1px solid #999999 !important;
-    border-radius: 0 !important;
-    padding: 8px 0 6px 0;
+    border: 1px solid #999999 !important;  /* bordo grigio attorno */
+    border-radius: 6px !important;
+    padding: 8px 12px;
     font-size: 1.1rem;
-    color: #333 !important;
+    color: #222222 !important;
     box-shadow: none !important;
     outline: none !important;
     transition: border-color 0.3s ease;
+    height: 2.8rem;  /* altezza fissa per allineare */
 }
 
+/* Focus input */
 div.stTextInput > div > input:focus {
-    border-bottom: 1px solid #666666 !important;
+    border: 1px solid #666666 !important;
     outline: none !important;
     box-shadow: none !important;
 }
 
+/* Placeholder */
 div.stTextInput > div > input::placeholder {
     color: #222222 !important;
     opacity: 1 !important;
 }
 
+/* Bottone freccia stile chat sempre rosso */
+button[kind="primary"] {
+    background-color: #d71921 !important;
+    color: white !important;
+    border: none !important;
+    font-size: 1.5rem;
+    padding: 0;
+    border-radius: 50%;
+    line-height: 1;
+    height: 2.8rem;
+    width: 2.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    margin-left: 0.5rem;
+    margin-top: 0.1rem;
+}
+
+/* Rimosso effetto hover per bottone (sempre rosso) */
+
+/* Label input minimal */
 div.stTextInput > label {
     color: #222222;
     font-weight: 500;
@@ -105,28 +130,6 @@ div.stTextInput > label {
     padding: 10px 0;
     z-index: 9999;
 }
-
-/* Bottone freccia stile chat */
-button[kind="primary"] {
-    background-color: #d71921 !important;
-    color: white !important;
-    border: none !important;
-    font-size: 1.5rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 50%;
-    line-height: 1;
-    height: 2.4rem;
-    width: 2.4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: background-color 0.3s ease;
-}
-
-button[kind="primary"]:hover {
-    background-color: #b9171e !important;
-}
 </style>
 
 <div class="top-bar"></div>
@@ -143,7 +146,6 @@ st.markdown("""
 <h2 style="position: relative; z-index: 10000;">del Comune di Palazzo Adriano</h2>
 """, unsafe_allow_html=True)
 
-# Carica il file PDF
 file = "Comune_di_Palazzo_Adriano.pdf"
 
 if file is not None:
@@ -165,31 +167,30 @@ if file is not None:
     embeddings = OpenAIEmbeddings(openai_api_key=chiave)
     vector_store = FAISS.from_texts(pezzi, embeddings)
 
-    # Input utente con bottone ➤ rosso
     with st.form("form_domanda", clear_on_submit=False):
-        cols = st.columns([8, 1])
+        cols = st.columns([9, 1])  # input largo, bottone stretto
         with cols[0]:
             domanda = st.text_input("Digita qui la tua richiesta:")
         with cols[1]:
             invia = st.form_submit_button(label="➤")
 
-    if invia and domanda:
-        with st.spinner("Sto cercando le informazioni che mi hai richiesto..."):
-            rilevanti = vector_store.similarity_search(domanda)
+        if invia and domanda:
+            with st.spinner("Sto cercando le informazioni che mi hai richiesto..."):
+                rilevanti = vector_store.similarity_search(domanda)
 
-            llm = ChatOpenAI(
-                openai_api_key=chiave,
-                temperature=1.0,
-                max_tokens=1000,
-                model_name="gpt-3.5-turbo-0125"
-            )
+                llm = ChatOpenAI(
+                    openai_api_key=chiave,
+                    temperature=1.0,
+                    max_tokens=1000,
+                    model_name="gpt-3.5-turbo-0125"
+                )
 
-            chain = load_qa_chain(llm, chain_type="stuff")
-            risposta = chain.run(input_documents=rilevanti, question=domanda)
+                chain = load_qa_chain(llm, chain_type="stuff")
+                risposta = chain.run(input_documents=rilevanti, question=domanda)
 
-        st.write(risposta)
+            st.write(risposta)
 
-# Footer
+# Footer fisso in basso
 st.markdown("""
 <div class="custom-footer">
     Questo assistente utilizza l’AI e potrebbe commettere errori. Verifica sempre le informazioni importanti. | © 2025 – Sviluppato da Emily D'Ugo
