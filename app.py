@@ -117,7 +117,7 @@ div.stTextInput > label {
 # Layout colonne e logo centrato
 col1, col2, col3 = st.columns([2.4, 1.2, 2.4])
 with col2:
-    st.image("Palazzo_Adriano-Stemma.png", width=120)
+    st.image("noname.png", width=120)
 
 # Titoli sopra la barra
 st.markdown("""
