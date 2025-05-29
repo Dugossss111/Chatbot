@@ -76,7 +76,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Layout colonne e logo centrato
-col1, col2, col3 = st.columns([2.5, 1.5, 2.5])
+col1, col2, col3 = st.columns([2, 2.2, 2])
 with col2:
     st.image("aaa.png", width=500)
 
