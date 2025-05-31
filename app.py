@@ -13,32 +13,20 @@ from PyPDF2 import PdfReader
 from PIL import Image
 
 
-# --- CSS principale corretto ---
+# --- CSS e banner ---
 st.markdown("""
 <style>
-/* Barra rossa con logo */
-.top-bar {
-    background-color: #d71921;
-    height: 4cm;
-    width: 100%;
+.top-banner {
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
     z-index: 9999;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
 }
 
-.top-bar img {
-    height: 3.5cm;
-    width: auto;
-    object-fit: contain;
-}
-
-/* Spazio sotto barra */
+/* Distanza per non sovrapporre il contenuto */
 [data-testid="stAppViewContainer"] {
-    padding-top: 4.5rem;
+    padding-top: 320px;  /* Altezza del banner in px */
     background-color: #f9f9f9;
 }
 
@@ -60,12 +48,7 @@ st.markdown("""
     font-size: 2.2rem;
 }
 
-/* Container per titolo + input, spostato in alto */
-#content-container {
-    margin-top: -2cm;
-}
-
-/* Stile per campo input con bordo rosso sempre */
+/* Input text rosso */
 input[type="text"] {
     background-color: #f9f9f9 !important;
     color: #222222 !important;
@@ -84,7 +67,7 @@ input[type="text"]:not(:focus) {
     outline: none !important;
 }
 
-/* Placeholder visibile e ben leggibile */
+/* Placeholder visibile */
 input::placeholder {
     color: #222222 !important;
     opacity: 1 !important;
@@ -92,7 +75,7 @@ input::placeholder {
     text-shadow: 0 0 2px white !important;
 }
 
-/* Footer fisso in basso */
+/* Footer fisso */
 .custom-footer {
     position: fixed;
     bottom: 0;
@@ -105,22 +88,26 @@ input::placeholder {
     padding: 10px 0;
     z-index: 9999;
 }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .top-banner img {
+        max-height: 180px;
+    }
+
+    [data-testid="stAppViewContainer"] {
+        padding-top: 200px;
+    }
+}
 </style>
 
-<div class="top-bar">
-    <img src="Palazzo_Adriano-Stemma.png" alt="Logo Comune">
+<!-- Banner in alto -->
+<div class="top-banner">
+    <img src="banner.png" style="width: 100%; height: auto;">
 </div>
 """, unsafe_allow_html=True)
 
-# Layout colonne e logo centrale
-col1, col2, col3 = st.columns([2, 2.2, 2])
-with col2:
-    st.image("aaa.png", width=500)
-
-# Contenitore con id per spostare titolo + input in alto
-st.markdown('<div id="content-container">', unsafe_allow_html=True)
-
-# Titolo
+# --- Titolo ---
 st.markdown("""
 <div class="custom-title">
   Assistente Virtuale<br>
@@ -128,12 +115,10 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Input
+# --- Input ---
 domanda = st.text_input("Ciao, sono Pai. In cosa posso esserti utile?")
 
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ---- Lettura PDF e chatbot ----
+# --- Lettura PDF e chatbot ---
 file = "Comune_di_Palazzo_Adriano.pdf"
 
 if file is not None:
@@ -182,7 +167,7 @@ if file is not None:
         </div>
         """, unsafe_allow_html=True)
 
-# Footer fisso in basso
+# --- Footer ---
 st.markdown("""
 <div class="custom-footer">
     Questo assistente utilizza l’AI e potrebbe commettere errori. Verifica sempre le informazioni importanti. | © 2025 – Sviluppato da Emily D'Ugo
